@@ -45,6 +45,8 @@ ext {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     endpointsServer project(path: ':backend', configuration: 'endpoints')
+    implementation project(":jokeLib")
+    implementation project(":jokeApp")
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "com.android.support:animated-vector-drawable:$supportLibVersion"
