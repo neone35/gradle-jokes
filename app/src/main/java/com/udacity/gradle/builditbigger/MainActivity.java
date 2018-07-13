@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static MyApi myApiService = null;
     private String dataString = null;
+    public static String joke;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +55,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-        String joke = getJokeFromBackend();
-
-        if (getJokeFromBackend() != null) {
+        joke = getJokeFromBackend();
+        if (joke != null) {
             // start jokeApp module MainActivity
             Intent jokeAppIntent = new Intent(this, com.example.aarta.jokeapp.MainActivity.class);
             Bundle jokeAppBundle = new Bundle();
@@ -64,7 +64,10 @@ public class MainActivity extends AppCompatActivity {
             jokeAppIntent.putExtras(jokeAppBundle);
             startActivity(jokeAppIntent);
         }
+    }
 
+    public String getJoke() {
+        return joke;
     }
 
     public String getJokeFromBackend() {
@@ -73,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             if (myApiService == null) {
                 MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                        .setRootUrl("http://10.0.2.2:8080/_ah/api/") // this is localhost on emulator
                         .setGoogleClientRequestInitializer(abstractGoogleClientRequest ->
                                 abstractGoogleClientRequest.setDisableGZipContent(true));
                 myApiService = builder.build();
@@ -81,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 dataString = myApiService.getMyJoke().execute().getJoke();
             } catch (IOException e) {
-                dataString = e.getMessage();
                 Logger.d(e.getMessage());
             }
         });
