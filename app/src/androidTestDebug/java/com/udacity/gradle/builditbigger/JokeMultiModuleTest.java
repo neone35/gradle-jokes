@@ -1,6 +1,8 @@
 package com.udacity.gradle.builditbigger;
 
 
+import android.support.test.espresso.UiController;
+import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -27,6 +29,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
@@ -34,11 +37,12 @@ import static org.hamcrest.Matchers.anyOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MainActivityTestRec {
+public class JokeMultiModuleTest {
+
+    private String[] exptectedJokes = JokeProvider.jokes;
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
-    private String[] exptectedJokes = JokeProvider.jokes;
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
@@ -59,13 +63,44 @@ public class MainActivityTestRec {
         };
     }
 
-    @Test
-    public void mainActivityTestRec() {
+    /**
+     * Perform action of waiting for a specific time.
+     */
+    public static ViewAction waitFor(final long millis) {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
 
-        // try to click "tell joke" button twice
+            @Override
+            public String getDescription() {
+                return "Wait for " + millis + " milliseconds.";
+            }
+
+            @Override
+            public void perform(UiController uiController, final View view) {
+                uiController.loopMainThreadForAtLeast(millis);
+            }
+        };
+    }
+
+    @Test
+    public void jokeMultiModuleTest() {
+
+        onView(isRoot()).perform(waitFor(5000));
+        // perform click
+        clickTellJokeButton(R.id.btn_tell_joke);
+
+        onView(isRoot()).perform(waitFor(5000));
+        // check received joke
+        verifyModuleJoke(R.id.tv_jokeapp_joke);
+    }
+
+    private void clickTellJokeButton(int btnID) {
         IntStream.range(0, 2).forEach($ -> {
             ViewInteraction button = onView(
-                    allOf(withId(R.id.btn_tell_joke),
+                    allOf(withId(btnID),
                             childAtPosition(
                                     allOf(withId(R.id.fragment),
                                             childAtPosition(
@@ -77,7 +112,7 @@ public class MainActivityTestRec {
 
 
             ViewInteraction appCompatButton = onView(
-                    allOf(withId(R.id.btn_tell_joke), withText("Tell Joke"),
+                    allOf(withId(btnID), withText("Tell Joke"),
                             childAtPosition(
                                     allOf(withId(R.id.fragment),
                                             childAtPosition(
@@ -87,23 +122,6 @@ public class MainActivityTestRec {
                             isDisplayed()));
             appCompatButton.perform(click());
         });
-
-        // check received value
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.tv_jokeapp_joke),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                1),
-                        isDisplayed()));
-        // joke is displayed
-        textView.check(matches(isDisplayed()));
-        // not null
-        textView.check(matches(textViewHasValue()));
-        // matches one of the possible jokes
-        textView.check(matches(textViewMatchesArray(exptectedJokes)));
-
     }
 
     private Matcher<View> textViewHasValue() {
@@ -146,5 +164,22 @@ public class MainActivityTestRec {
                 return Arrays.asList(stringArray).contains(text);
             }
         };
+    }
+
+    private void verifyModuleJoke(int tvID) {
+        ViewInteraction textView = onView(
+                allOf(withId(tvID),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                1),
+                        isDisplayed()));
+        // joke is displayed
+        textView.check(matches(isDisplayed()));
+        // not null
+        textView.check(matches(textViewHasValue()));
+        // matches one of the possible jokes
+        textView.check(matches(textViewMatchesArray(exptectedJokes)));
     }
 }
