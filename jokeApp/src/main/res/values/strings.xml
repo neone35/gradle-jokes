@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">jokeApp</string>
+    <string name="joke_sent_from_library_through_gce">Joke sent from library through GCE:</string>
 </resources>

@@ -8,9 +8,21 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/tv_jokeapp_label"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/joke_sent_from_library_through_gce" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_margin="8dp"
         android:id="@+id/tv_jokeapp_joke"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="joke from main module here" />
+        tools:text="Gradle is faster than light" />
 
 </LinearLayout>

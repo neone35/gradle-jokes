@@ -3,23 +3,31 @@ package com.udacity.gradle.builditbigger;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.aarta.jokelib.JokeProvider;
-import com.google.android.gms.ads.MobileAds;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
+
+import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private static String KEY_JOKE = "joke";
+    private static MyApi myApiService = null;
+    private String dataString = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Logger.addLogAdapter(new AndroidLogAdapter());
     }
 
 
@@ -46,17 +54,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-        String joke = JokeProvider.getJoke();
+        String joke = getJokeFromBackend();
 
-        // start jokeApp module MainActivity
-        Intent jokeAppIntent = new Intent(this, com.example.aarta.jokeapp.MainActivity.class);
-        Bundle jokeAppBundle = new Bundle();
-        jokeAppBundle.putString(KEY_JOKE, joke);
-        jokeAppIntent.putExtras(jokeAppBundle);
-        startActivity(jokeAppIntent);
+        if (getJokeFromBackend() != null) {
+            // start jokeApp module MainActivity
+            Intent jokeAppIntent = new Intent(this, com.example.aarta.jokeapp.MainActivity.class);
+            Bundle jokeAppBundle = new Bundle();
+            jokeAppBundle.putString("joke", joke);
+            jokeAppIntent.putExtras(jokeAppBundle);
+            startActivity(jokeAppIntent);
+        }
 
-//        Toast.makeText(this, joke, Toast.LENGTH_SHORT).show();
     }
 
-
+    public String getJokeFromBackend() {
+        AppExecutors executors = AppExecutors.getInstance();
+        executors.networkIO().execute(() -> {
+            if (myApiService == null) {
+                MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null)
+                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                        .setGoogleClientRequestInitializer(abstractGoogleClientRequest ->
+                                abstractGoogleClientRequest.setDisableGZipContent(true));
+                myApiService = builder.build();
+            }
+            try {
+                dataString = myApiService.getMyJoke().execute().getJoke();
+            } catch (IOException e) {
+                dataString = e.getMessage();
+                Logger.d(e.getMessage());
+            }
+        });
+        return dataString;
+    }
 }
