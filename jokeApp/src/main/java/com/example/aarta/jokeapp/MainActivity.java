@@ -11,10 +11,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_jokeapp);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
         Bundle appExtrasBundle = getIntent().getExtras();
         if (appExtrasBundle != null) {
             String joke = appExtrasBundle.getString("joke");

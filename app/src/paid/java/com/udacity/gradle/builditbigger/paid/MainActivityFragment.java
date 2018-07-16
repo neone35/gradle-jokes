@@ -16,6 +16,7 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.orhanobut.logger.Logger;
 import com.udacity.gradle.builditbigger.AppExecutors;
+import com.udacity.gradle.builditbigger.JokeExecutor;
 import com.udacity.gradle.builditbigger.R;
 import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
 import com.udacity.gradle.builditbigger.backend.myApi.model.MyJoke;
@@ -29,8 +30,6 @@ import java.util.Objects;
  */
 public class MainActivityFragment extends Fragment {
 
-    private AppExecutors appExecutors;
-    private MyApi myApiService;
     private View rootView;
     private Context ctx;
 
@@ -40,7 +39,6 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        appExecutors = AppExecutors.getInstance();
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ctx = rootView.getContext();
 
@@ -52,32 +50,7 @@ public class MainActivityFragment extends Fragment {
         Button btnTellJoke = rootView.findViewById(R.id.btn_tell_joke);
         btnTellJoke.setOnClickListener(v -> {
             // fetch joke and start jokeApp module MainActivity
-            fetchAndForwardBtnJoke();
-        });
-    }
-
-    public void fetchAndForwardBtnJoke() {
-        appExecutors.networkIO().execute(() -> {
-            if (myApiService == null) {
-                MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null)
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/") // this is localhost on emulator
-                        .setGoogleClientRequestInitializer(abstractGoogleClientRequest ->
-                                abstractGoogleClientRequest.setDisableGZipContent(true));
-                myApiService = builder.build();
-            }
-            try {
-                String data = myApiService.getMyJoke().execute().getJokeString();
-                Intent jokeAppIntent = new Intent(ctx, com.example.aarta.jokeapp.MainActivity.class);
-                Bundle jokeAppBundle = new Bundle();
-                jokeAppBundle.putString("joke", data);
-                jokeAppIntent.putExtras(jokeAppBundle);
-                startActivity(jokeAppIntent);
-            } catch (IOException e) {
-                Logger.d(e.getMessage());
-                Objects.requireNonNull(getActivity()).runOnUiThread(() ->
-                        Toast.makeText(ctx, "Joke server unavailable", Toast.LENGTH_SHORT).show());
-            }
+            JokeExecutor.fetchAndForwardBtnJoke(ctx, getActivity(), null);
         });
     }
 }

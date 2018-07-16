@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GradleJokes.iml" filepath="$PROJECT_DIR$/GradleJokes.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/backend/backend.iml" filepath="$PROJECT_DIR$/backend/backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gradle-jokes.iml" filepath="$PROJECT_DIR$/gradle-jokes.iml" />
       <module fileurl="file://$PROJECT_DIR$/jokeApp/jokeApp.iml" filepath="$PROJECT_DIR$/jokeApp/jokeApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/jokeLib/jokeLib.iml" filepath="$PROJECT_DIR$/jokeLib/jokeLib.iml" />
     </modules>

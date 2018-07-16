@@ -16,4 +16,29 @@ allprojects {
         jcenter()
         google()
     }
+    tasks.withType(Test) {
+        testLogging {
+            exceptionFormat "full"
+            showCauses true
+            showExceptions true
+            showStackTraces true
+            showStandardStreams true
+            events = ["passed", "skipped", "failed", "standardOut", "standardError"]
+        }
+    }
 }
+
+task startServer (dependsOn: "backend:appengineStart") {}
+task testPaid (dependsOn: "app:connectedPaidDebugAndroidTest") {}
+task stopServer (dependsOn: "backend:appengineStop") {}
+task GCEtesting {
+    dependsOn = ["startServer",
+                 "testPaid",
+                 "stopServer"]
+    group = 'custom'
+    description 'Starts GCE server, runs tests and stops server.'
+    testPaid.mustRunAfter 'startServer'
+    stopServer.mustRunAfter 'testPaid'
+}
+
+
