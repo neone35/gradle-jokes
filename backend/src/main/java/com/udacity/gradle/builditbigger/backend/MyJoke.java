@@ -7,12 +7,12 @@ public class MyJoke {
 
     private String mJokeString;
 
-    public String getJoke() {
-        mJokeString = JokeProvider.getJoke();
+    public String getJokeString() {
+        mJokeString = JokeProvider.getJokeString();
         return mJokeString;
     }
 
-    public void setJoke(String data) {
+    public void setJokeString(String data) {
         mJokeString = data;
     }
 }

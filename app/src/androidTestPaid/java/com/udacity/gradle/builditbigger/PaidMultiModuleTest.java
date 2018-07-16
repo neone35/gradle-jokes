@@ -1,6 +1,5 @@
 package com.udacity.gradle.builditbigger;
 
-
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
@@ -37,12 +36,11 @@ import static org.hamcrest.Matchers.anyOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class JokeMultiModuleTest {
-
-    private String[] exptectedJokes = JokeProvider.jokes;
+public class PaidMultiModuleTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    private String[] exptectedJokes = JokeProvider.jokes;
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
@@ -98,30 +96,45 @@ public class JokeMultiModuleTest {
     }
 
     private void clickTellJokeButton(int btnID) {
-        IntStream.range(0, 2).forEach($ -> {
-            ViewInteraction button = onView(
-                    allOf(withId(btnID),
-                            childAtPosition(
-                                    allOf(withId(R.id.fragment),
-                                            childAtPosition(
-                                                    withId(android.R.id.content),
-                                                    0)),
-                                    1),
-                            isDisplayed()));
-            button.check(matches(isDisplayed()));
+        ViewInteraction button = onView(
+                allOf(withId(btnID),
+                        childAtPosition(
+                                allOf(withId(R.id.fragment),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                1),
+                        isDisplayed()));
+        button.check(matches(isDisplayed()));
 
 
-            ViewInteraction appCompatButton = onView(
-                    allOf(withId(btnID), withText("Tell Joke"),
-                            childAtPosition(
-                                    allOf(withId(R.id.fragment),
-                                            childAtPosition(
-                                                    withId(android.R.id.content),
-                                                    0)),
-                                    1),
-                            isDisplayed()));
-            appCompatButton.perform(click());
-        });
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(btnID), withText("Tell Joke"),
+                        childAtPosition(
+                                allOf(withId(R.id.fragment),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                1),
+                        isDisplayed()));
+        appCompatButton.perform(click());
+    }
+
+    private void verifyModuleJoke(int tvID) {
+        ViewInteraction textView = onView(
+                allOf(withId(tvID),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                1),
+                        isDisplayed()));
+        // joke is displayed
+        textView.check(matches(isDisplayed()));
+        // not null
+        textView.check(matches(textViewHasValue()));
+        // matches one of the possible jokes
+        textView.check(matches(textViewMatchesArray(exptectedJokes)));
     }
 
     private Matcher<View> textViewHasValue() {
@@ -164,22 +177,5 @@ public class JokeMultiModuleTest {
                 return Arrays.asList(stringArray).contains(text);
             }
         };
-    }
-
-    private void verifyModuleJoke(int tvID) {
-        ViewInteraction textView = onView(
-                allOf(withId(tvID),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                1),
-                        isDisplayed()));
-        // joke is displayed
-        textView.check(matches(isDisplayed()));
-        // not null
-        textView.check(matches(textViewHasValue()));
-        // matches one of the possible jokes
-        textView.check(matches(textViewMatchesArray(exptectedJokes)));
     }
 }
