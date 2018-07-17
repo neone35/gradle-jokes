@@ -17,8 +17,9 @@ import javax.inject.Named;
         )
 )
 public class MyEndpoint {
-
-    /** A simple endpoint method that takes a name and says Hi back */
+    /**
+     * An endpoint method that returns MyJoke model with data from external library
+     */
     @ApiMethod(name = "getMyJoke")
     public MyJoke getMyJoke() {
         return new MyJoke();

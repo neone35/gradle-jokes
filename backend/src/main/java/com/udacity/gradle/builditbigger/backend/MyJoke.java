@@ -2,7 +2,9 @@ package com.udacity.gradle.builditbigger.backend;
 
 import com.example.aarta.jokelib.JokeProvider;
 
-/** The object model for the data we are sending through endpoints */
+/**
+ * The object model for the library data we are sending through endpoints
+ */
 public class MyJoke {
 
     private String mJokeString;

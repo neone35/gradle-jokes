@@ -1,9 +1,11 @@
 package com.udacity.gradle.builditbigger.free;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
-import com.udacity.gradle.builditbigger.JokeExecutor;
+import com.udacity.gradle.builditbigger.JokeTask;
 import com.udacity.gradle.builditbigger.R;
 
 
@@ -55,6 +57,7 @@ public class MainActivityFragment extends Fragment {
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
     }
 
+    @SuppressWarnings("unchecked")
     public void listenForJokeAndAdCloseClick() {
         Button btnTellJoke = rootView.findViewById(R.id.btn_tell_joke);
         btnTellJoke.setOnClickListener(v -> {
@@ -70,7 +73,8 @@ public class MainActivityFragment extends Fragment {
                 public void onAdClosed() {
                     super.onAdClosed();
                     // get joke and start jokeApp module MainActivity
-                    JokeExecutor.fetchAndForwardBtnJoke(ctx, getActivity(), mCpdProgress);
+                    mCpdProgress.setVisibility(View.VISIBLE);
+                    new JokeTask().execute(new Pair<>(getActivity(), mCpdProgress));
                 }
             });
         });
