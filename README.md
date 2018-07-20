@@ -9,9 +9,6 @@ As Android projects grow in complexity, it becomes necessary to customize the be
 ## Project scheme
 ![Gradle jokes scheme](https://preview.ibb.co/d08bP8/gradle_jokes_scheme.png "Gradle jokes scheme")
 
-## Screenshots
-To be added
-
 ## What Did I Learn / Use?
 - Product flavors (Free & Paid)
 - Libraries (Java & Android)
